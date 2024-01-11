@@ -11,9 +11,16 @@
 
 	let profileForm: HTMLFormElement
 	let loading = false
-	let firstName: string = profile?.first_name ?? ''
-	let lastName: string = profile?.last_name ?? ''
-	let company: string = profile?.company ?? ''
+	let firstName: string = ""
+	let lastName: string = ""
+	let company: string = ""
+	
+	$: {
+		let { session, supabase, profile } = data;
+		firstName = profile?.first_name ?? '';
+		lastName = profile?.last_name ?? '';
+		company = profile?.company ?? '';
+	}
 
 	const handleSubmit: SubmitFunction = () => {
 		loading = true

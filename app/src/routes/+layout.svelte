@@ -26,3 +26,9 @@
 <div class="container" style="padding: 50px 0 100px 0">
 	<slot />
 </div>
+
+<style lang="postcss">
+	:global(html) {
+	  background-color: theme(colors.lime.50);
+	}
+</style>

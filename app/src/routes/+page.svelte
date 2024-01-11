@@ -18,5 +18,14 @@
 			showLinks={false}
 			appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
 		/>
+		<Auth
+			supabaseClient={data.supabase}
+			view="sign_in"
+			redirectTo={`${data.url}/account`}
+			showLinks={true}
+			appearance={{ theme: ThemeSupa, style: { input: 'color: #fff' } }}
+		/>
 	</div>
+  <h1>Register</h1>
+  <a class="border-2 p-3" href="/register">Register</a>
 </div>
