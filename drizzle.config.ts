@@ -4,8 +4,8 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
 
 export default {
-  schema: "./src/schema/*",
-  out: "./src/lib/server",
+  schema: "./src/lib/server/schema.ts",
+  out: "./src/lib/server/",
   driver: 'pg',
   dbCredentials: {
     connectionString: `${process.env.DATABASE_URL}`,	

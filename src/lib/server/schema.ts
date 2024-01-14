@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, timestamp, text } from "drizzle-orm/pg-core"
+import { pgTable, pgEnum, uuid, timestamp, text, bigint } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
@@ -15,4 +15,12 @@ export const profiles = pgTable("profiles", {
 	firstName: text("first_name"),
 	lastName: text("last_name"),
 	company: text("company"),
+});
+
+export const inboundEmails = pgTable("inbound_emails", {
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	id: bigint("id", { mode: "number" }).primaryKey().notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	from: text("from"),
+	subject: text("subject"),
 });
