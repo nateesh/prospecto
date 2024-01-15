@@ -51,6 +51,7 @@
 		"clsx": "^2.1.0",
 		"dotenv": "^16.3.1",
 		"drizzle-orm": "^0.29.2",
+		"mode-watcher": "^0.1.2",
 		"postgres": "^3.4.3",
 		"radix-icons-svelte": "^1.2.1",
 		"tailwind-merge": "^2.2.0",
