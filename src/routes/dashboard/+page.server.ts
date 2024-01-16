@@ -7,14 +7,11 @@ export const load = async ({ locals: { supabase, getSession } }) => {
     throw redirect(303, '/login')
   }
 
-  //   const { data: profile } = await supabase
-  //     .from('profiles')
-  //     .select(`first_name, last_name, company`)
-  //     .eq('id', session.user.id)
-  //     .single()
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select(`first_name, last_name, company`)
+    .eq('id', session.user.id)
+    .single()
 
-  return {
-    session,
-    // profile 
-  }
+    return { session, profile }
 }
