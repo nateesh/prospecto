@@ -2,6 +2,16 @@ import { AuthApiError } from "@supabase/supabase-js"
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions } from "./$types"
 
+export const load = async ({ locals: { getSession } }) => {
+  const session = await getSession()
+
+  if (session) {
+    throw redirect(303, '/dashboard')
+  }
+
+  return { session }
+}
+
 export const actions: Actions = {
 	register: async ({ request, locals }) => {
 		const body = Object.fromEntries(await request.formData())
