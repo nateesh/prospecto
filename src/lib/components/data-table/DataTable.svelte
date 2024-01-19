@@ -5,6 +5,7 @@
 	import { Render, Subscribe, createRender, createTable } from 'svelte-headless-table';
 	import {
 		addColumnFilters,
+		addDataExport,
 		addHiddenColumns,
 		addPagination,
 		addSelectedRows,
@@ -13,8 +14,8 @@
 	} from 'svelte-headless-table/plugins';
 	import DataTableDateCell from './DataTableDateCell.svelte';
 
-	// import type { PageData } from './$types';
 	import type { TenementsSummarySelect } from '$lib/server/schema.types';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	export let data: any;
 	let tenements_summary: TenementsSummarySelect[] = data.tenements_summary;
@@ -24,6 +25,9 @@
 	// export let data.tenements_summary: TenementsSummarySelect;
 
 	const table = createTable(readable(tenements_summary), {
+		export: addDataExport({
+			format: 'csv'
+		}),
 		select: addSelectedRows(),
 		sort: addSortBy({
 			toggleOrder: ['asc', 'desc']
@@ -45,36 +49,29 @@
 			id: 'operator',
 			plugins: {
 				sort: {
-					disable: true
+					disable: false
 				}
 			}
 		}),
 		table.column({
 			accessor: 'tenement',
 			header: 'Tenement',
-			id: 'tenement'
-			// cell: ({ value }) =>
-			// createRender(Bold, {
-			//   text: value,
-			// }),
+			id: 'tenement',
+			plugins: {
+				sort: {
+					disable: false
+				}
+			}
 		}),
 		table.column({
 			accessor: 'name',
 			header: 'Name',
 			id: 'name'
-			// cell: ({ value }) =>
-			// createRender(Bold, {
-			//   text: value,
-			// }),
 		}),
 		table.column({
 			accessor: 'state',
 			header: 'State',
 			id: 'state'
-			// cell: ({ value }) =>
-			// createRender(Bold, {
-			//   text: value,
-			// }),
 		}),
 		table.column({
 			accessor: 'grant',
@@ -109,52 +106,52 @@
 		table.column({
 			accessor: 'year',
 			header: 'Year',
-			id: 'year',
+			id: 'year'
 		}),
 		table.column({
 			accessor: 'applYears',
 			header: 'Appl Years',
-			id: 'applYears',
+			id: 'applYears'
 		}),
 		table.column({
 			accessor: 'location',
 			header: 'Location',
-			id: 'location',
+			id: 'location'
 		}),
 		table.column({
 			accessor: 'ha',
 			header: 'Ha',
-			id: 'ha',
+			id: 'ha'
 		}),
 		table.column({
 			accessor: 'subBlocks',
 			header: 'Sub Blocks',
-			id: 'subBlocks',
+			id: 'subBlocks'
 		}),
 		table.column({
 			accessor: 'sqkm',
 			header: 'Sq Km',
-			id: 'sqkm',
+			id: 'sqkm'
 		}),
 		table.column({
 			accessor: 'rentPA',
 			header: 'Rent P.A.',
-			id: 'rentPA',
+			id: 'rentPA'
 		}),
 		table.column({
 			accessor: 'security',
 			header: 'Security',
-			id: 'security',
+			id: 'security'
 		}),
 		table.column({
 			accessor: 'enviroAuthority',
 			header: 'Enviro Authority',
-			id: 'enviroAuthority',
+			id: 'enviroAuthority'
 		}),
 		table.column({
 			accessor: 'eaType',
 			header: 'EA Type',
-			id: 'eaType',
+			id: 'eaType'
 		}),
 		table.column({
 			accessor: 'eaDate',
@@ -164,23 +161,43 @@
 				return createRender(DataTableDateCell, {
 					value: value
 				});
-			},
-		}),
-		
+			}
+		})
 	]);
-	
+
 	const tableModel = table.createViewModel(columns);
-	const { headerRows, pageRows, tableAttrs, tableBodyAttrs } = tableModel;
+	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = tableModel;
+	const { exportedData } = pluginStates.export;
+	let exportedDataValue: string = get(exportedData) //this is type string
+	//write to file and download
+	function downloadFile(dataValue: string) {
+        const blob = new Blob([dataValue], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', 'export.csv');
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
 </script>
+<Button type="button" size="sm" on:click={() => downloadFile(exportedDataValue)}>Export</Button>
 
 <Table.Root {...$tableAttrs}>
 	<Table.Header>
 		{#each $headerRows as headerRow}
-			<Table.Row>
-				{#each headerRow.cells as cell (cell.id)}
-					<Table.Head>{cell.label}</Table.Head>
-				{/each}
-			</Table.Row>
+			<Subscribe rowAttrs={headerRow.attrs()} rowProps={headerRow.props()} let:rowProps>
+				<Table.Row>
+					{#each headerRow.cells as cell (cell.id)}
+						<Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
+							<Table.Head>{cell.label}</Table.Head>
+						</Subscribe>
+					{/each}
+				</Table.Row>
+			</Subscribe>
 		{/each}
 	</Table.Header>
 	<Table.Body {...$tableBodyAttrs}>
@@ -190,8 +207,11 @@
 					{#each row.cells as cell (cell.id)}
 						<Subscribe attrs={cell.attrs()} let:attrs>
 							<Table.Cell {...attrs} class="">
-								<Render of={cell.render()} />
-								<!-- {cell.render()} -->
+								{#if cell.render().toString() === 'null'}
+									-
+								{:else}
+									<Render of={cell.render()} />
+								{/if}
 							</Table.Cell>
 						</Subscribe>
 					{/each}
@@ -201,7 +221,7 @@
 	</Table.Body>
 </Table.Root>
 
-<Table.Root>
+<!-- <Table.Root>
 	<Table.Caption>A list of your recent invoices.</Table.Caption>
 	<Table.Header>
 		<Table.Row>
@@ -223,4 +243,4 @@
 			{/each}
 		{/if}
 	</Table.Body>
-</Table.Root>
+</Table.Root> -->
