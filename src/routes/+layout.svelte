@@ -3,7 +3,7 @@
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { ModeWatcher, toggleMode } from 'mode-watcher';
-	import { Sun, Moon, Gear } from 'radix-icons-svelte';
+	import { Sun, Moon, Gear, Dashboard } from 'radix-icons-svelte';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
 
@@ -51,7 +51,10 @@
         <Gear class="h-[1.2rem] w-[1.2rem] mr-2"/>
         <span class="">Account</span>
       </Button>
-      <Button variant="secondary" href="/dashboard">Dashboard</Button>
+      <Button variant="secondary" href="/dashboard">
+				<Dashboard class="mr-2" /> 
+				<span>Dashboard</span>
+			</Button>
       <h1 class="text-sm font-bold ">Welcome, {session.user.email}</h1>
       <div class="text">
         <form method="post" action="/account?/signout" use:enhance={handleSignOut}>
