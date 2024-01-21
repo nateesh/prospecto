@@ -1,0 +1,342 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "first_name": {
+          "name": "first_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company": {
+          "name": "company",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_id_fkey": {
+          "name": "profiles_id_fkey",
+          "tableFrom": "profiles",
+          "tableTo": "users",
+          "schemaTo": "auth",
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "inbound_emails": {
+      "name": "inbound_emails",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "from": {
+          "name": "from",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subject": {
+          "name": "subject",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tenements_summary": {
+      "name": "tenements_summary",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "owner": {
+          "name": "owner",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "operator": {
+          "name": "operator",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tenement": {
+          "name": "tenement",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grant": {
+          "name": "grant",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commencement": {
+          "name": "commencement",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expiry": {
+          "name": "expiry",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "year": {
+          "name": "year",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "appl_years": {
+          "name": "appl_years",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ha": {
+          "name": "ha",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sub_blocks": {
+          "name": "sub_blocks",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sqkm": {
+          "name": "sqkm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ea type": {
+          "name": "ea type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ea_date": {
+          "name": "ea_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rent_p_a": {
+          "name": "rent_p_a",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rent_paid": {
+          "name": "rent_paid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "security": {
+          "name": "security",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enviro_authority": {
+          "name": "enviro_authority",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enviro_fee_p_a": {
+          "name": "enviro_fee_p_a",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enviro_fee_paid": {
+          "name": "enviro_fee_paid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "area_km2": {
+          "name": "area_km2",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rent_per_sub_block": {
+          "name": "rent_per_sub_block",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "tenements_summary_owner_fkey": {
+          "name": "tenements_summary_owner_fkey",
+          "tableFrom": "tenements_summary",
+          "tableTo": "profiles",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "owner"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "key_status": {
+      "name": "key_status",
+      "values": {
+        "default": "default",
+        "valid": "valid",
+        "invalid": "invalid",
+        "expired": "expired"
+      }
+    },
+    "key_type": {
+      "name": "key_type",
+      "values": {
+        "aead-ietf": "aead-ietf",
+        "aead-det": "aead-det",
+        "hmacsha512": "hmacsha512",
+        "hmacsha256": "hmacsha256",
+        "auth": "auth",
+        "shorthash": "shorthash",
+        "generichash": "generichash",
+        "kdf": "kdf",
+        "secretbox": "secretbox",
+        "secretstream": "secretstream",
+        "stream_xchacha20": "stream_xchacha20"
+      }
+    },
+    "factor_type": {
+      "name": "factor_type",
+      "values": {
+        "totp": "totp",
+        "webauthn": "webauthn"
+      }
+    },
+    "factor_status": {
+      "name": "factor_status",
+      "values": {
+        "unverified": "unverified",
+        "verified": "verified"
+      }
+    },
+    "aal_level": {
+      "name": "aal_level",
+      "values": {
+        "aal1": "aal1",
+        "aal2": "aal2",
+        "aal3": "aal3"
+      }
+    },
+    "code_challenge_method": {
+      "name": "code_challenge_method",
+      "values": {
+        "s256": "s256",
+        "plain": "plain"
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

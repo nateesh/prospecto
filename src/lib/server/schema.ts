@@ -1,5 +1,5 @@
-import { pgTable, pgEnum, uuid, timestamp, text, bigint, foreignKey, primaryKey, varchar, smallint, integer, real, boolean } from "drizzle-orm/pg-core"
-  import { sql } from "drizzle-orm"
+import { pgTable, foreignKey, pgEnum, uuid, timestamp, text, bigint, varchar, smallint, integer, real, boolean } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 
 export const keyStatus = pgEnum("key_status", ['default', 'valid', 'invalid', 'expired'])
 export const keyType = pgEnum("key_type", ['aead-ietf', 'aead-det', 'hmacsha512', 'hmacsha256', 'auth', 'shorthash', 'generichash', 'kdf', 'secretbox', 'secretstream', 'stream_xchacha20'])
@@ -10,7 +10,7 @@ export const codeChallengeMethod = pgEnum("code_challenge_method", ['s256', 'pla
 
 
 export const profiles = pgTable("profiles", {
-	id: uuid("id").primaryKey().notNull(),
+	id: uuid("id").primaryKey().notNull().references(() => users.id, { onDelete: "cascade" } ),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }),
 	firstName: text("first_name"),
 	lastName: text("last_name"),
@@ -31,7 +31,7 @@ export const tenementsSummary = pgTable("tenements_summary", {
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	owner: uuid("owner").references(() => profiles.id, { onDelete: "restrict", onUpdate: "cascade" } ),
 	operator: varchar("operator"),
-	tenement: varchar("tenement").notNull(),
+	tenement: varchar("tenement").primaryKey().notNull(),
 	name: varchar("name"),
 	state: varchar("state"),
 	grant: timestamp("grant", { withTimezone: true, mode: 'string' }),
@@ -51,9 +51,6 @@ export const tenementsSummary = pgTable("tenements_summary", {
 	enviroAuthority: varchar("enviro_authority"),
 	enviroFeePA: varchar("enviro_fee_p_a"),
 	enviroFeePaid: boolean("enviro_fee_paid"),
-},
-(table) => {
-	return {
-		tenementsSummaryPkey: primaryKey({ columns: [table.id, table.tenement], name: "tenements_summary_pkey"})
-	}
+	areaKm2: smallint("area_km2"),
+	rentPerSubBlock: real("rent_per_sub_block"),
 });
