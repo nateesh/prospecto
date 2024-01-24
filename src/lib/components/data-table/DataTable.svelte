@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { get, readable } from 'svelte/store';
+	import { get, readable, writable } from 'svelte/store';
 	import { Dashboard } from 'radix-icons-svelte';
 	import * as Table from '$lib/components/ui/table';
 	import { Render, Subscribe, createRender, createTable } from 'svelte-headless-table';
@@ -13,18 +13,42 @@
 		addTableFilter
 	} from 'svelte-headless-table/plugins';
 	import DataTableDateCell from './DataTableDateCell.svelte';
+	import DataTableEditableCell from './DataTableEditableCell.svelte';
 
 	import type { TenementsSummarySelect } from '$lib/server/schema.types';
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	export let data: any;
-	let tenements_summary: TenementsSummarySelect[] = data.tenements_summary;
+	let tenementsSummary: TenementsSummarySelect[] = data.tenements_summary;
+	// put tenements_summary into a svelte store baned dataTenementsSummary
+	let tenementsSummaryStore = readable(tenementsSummary);
 
-	// let { session, supabase, tenements_summary } = data;
+	// const tableData = writable(tenements_summary_insert);
+	//console log first row of table data
+	// console.log(get(tableData)[0]);
 
-	// export let data.tenements_summary: TenementsSummarySelect;
+	var newData: Array<{ rowDataId: any; tenement: any; columnId: any; newValue: any }> = [];
+	var newDataString = '';
+	$: newDataString = JSON.stringify(newData);
 
-	const table = createTable(readable(tenements_summary), {
+	const updateData = (rowDataId: any, columnId: any, newValue: any) => {
+		// get the tenement
+		const tenement = get(tenementsSummaryStore)[rowDataId]['tenement'];
+		//remove the record being replaced
+		if (newData.length > 0) {
+			for (let i = 0; i < newData.length; i++) {
+				if (newData[i].rowDataId === rowDataId && newData[i].columnId === columnId) {
+					newData.splice(i, 1);
+				}
+			}
+		}
+		
+    newData = [...newData, { rowDataId, tenement, columnId, newValue }];
+		console.log(newData);
+
+	};
+
+	const table = createTable(readable(tenementsSummary), {
 		export: addDataExport({
 			format: 'csv'
 		}),
@@ -139,6 +163,26 @@
 			id: 'rentPA'
 		}),
 		table.column({
+			accessor: 'rentPaid',
+			header: 'Rent Paid?',
+			id: 'rentPaid',
+			cell: ({ column, row, value, props }) => {
+				return createRender(DataTableEditableCell, { 
+					row, column, value, props: {"dropDown": {"true": "Y", "false": "N"}}, onUpdateValue: updateData 
+				});
+			}
+		}),
+		table.column({
+			accessor: 'rentPerSubBlock',
+			header: 'Rent Per Sub Block',
+			id: 'rentPerSubBlock',
+			cell: ({ column, row, value, props }) => {
+				return createRender(DataTableEditableCell, { 
+					row, column, value, props, onUpdateValue: updateData 
+				});
+			}
+		}),
+		table.column({
 			accessor: 'security',
 			header: 'Security',
 			id: 'security'
@@ -162,29 +206,49 @@
 					value: value
 				});
 			}
-		})
+		}),
+		table.column({
+			accessor: 'enviroFeePaid',
+			header: 'EA Fee Paid',
+			id: 'enviroFeePaid',
+			cell: ({ column, row, value, props }) => {
+				return createRender(DataTableEditableCell, { 
+					row, column, value, props: {"dropDown": {"true": "Y", "false": "N"}}, onUpdateValue: updateData 
+				});
+			}
+		}),
 	]);
 
 	const tableModel = table.createViewModel(columns);
 	const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = tableModel;
 	const { exportedData } = pluginStates.export;
-	let exportedDataValue: string = get(exportedData) //this is type string
+	let exportedDataValue: string = get(exportedData); //this is type string
 	//write to file and download
 	function downloadFile(dataValue: string) {
-        const blob = new Blob([dataValue], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.setAttribute('hidden', '');
-        a.setAttribute('href', url);
-        a.setAttribute('download', 'export.csv');
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-    }
-
+		const blob = new Blob([dataValue], { type: 'text/csv' });
+		const url = window.URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.setAttribute('hidden', '');
+		a.setAttribute('href', url);
+		a.setAttribute('download', 'export.csv');
+		document.body.appendChild(a);
+		a.click();
+		window.URL.revokeObjectURL(url);
+		document.body.removeChild(a);
+	}
 </script>
-<Button type="button" size="sm" on:click={() => downloadFile(exportedDataValue)}>Export</Button>
+
+<div class="flex mb-5">
+	<h1 class="text-xl font-bold">Tenements Summary Dashboard</h1>
+	<div class="ml-auto flex space-x-3">
+		<Button type="button" size="sm" on:click={() => downloadFile(exportedDataValue)}>Export</Button>
+	
+		<form method="POST" action="?/update">
+			<input type="hidden" bind:value={newDataString} name="newData" />
+			<Button type="submit" size="sm" variant="default">Save Changes</Button>
+		</form>
+	</div>
+</div>
 
 <Table.Root {...$tableAttrs}>
 	<Table.Header>
