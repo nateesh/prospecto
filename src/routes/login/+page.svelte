@@ -1,7 +1,12 @@
 <script lang="ts">
+	import { EyeClosed, EyeNone, EyeOpen } from 'radix-icons-svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { Button } from '$lib/components/ui/button';
+	import { Toggle } from "$lib/components/ui/toggle"
+	
+	let showPassword = false;
+	$: passwordFieldState = showPassword ? "text" : "password";
 
 	let isRegister = false;
 	let forgotPass = false;
@@ -67,8 +72,17 @@
 				<form action="?/register" method="POST" class="space-y-2">
 					<Label for="email">Email</Label>
 					<Input name="email" placeholder="Email" type="email" />
-					<Label for="password">Passowrd</Label>
-					<Input name="password" placeholder="Password" type="password" />
+					<Label for="password">Password</Label>
+					<div class="flex relative">
+						<Input name="password" placeholder="Password" type={passwordFieldState} />
+						<Toggle class="absolute top-0 right-10" on:click={() => { showPassword = !showPassword; }}>
+							{#if showPassword}
+								<EyeOpen />
+							{:else}
+								<EyeNone />
+							{/if}
+						</Toggle>					
+					</div>
 					<Button type="submit">Register</Button>
 				</form>
 				{:else if !isRegister && !forgotPass}
@@ -79,8 +93,17 @@
 					<form action="?/login" method="POST" class="space-y-2">
 						<Label for="email">Email</Label>
 						<Input name="email" placeholder="Email" type="email" />
-						<Label for="password">Password</Label>
-						<Input name="password" placeholder="Password" type="password" />
+						<Label for="password">Password<span></span> </Label>
+						<div class="flex relative">
+							<Input name="password" placeholder="Password" type={passwordFieldState} />
+							<Toggle class="absolute top-0 right-10" on:click={() => { showPassword = !showPassword; }}>
+								{#if showPassword}
+									<EyeOpen />
+								{:else}
+								<EyeNone />
+								{/if}
+							</Toggle>
+						</div>
 						<Button type="submit">Login</Button>
 						<Button	type="button"	on:click={() => {	forgotPass = true; }}>Forgot password?</Button>
 					</form>
