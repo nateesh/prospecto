@@ -75,7 +75,7 @@
 					<Label for="password">Password</Label>
 					<div class="flex relative">
 						<Input name="password" placeholder="Password" type={passwordFieldState} />
-						<Toggle class="absolute top-0 right-10" on:click={() => { showPassword = !showPassword; }}>
+						<Toggle class="absolute top-0 right-0" on:click={() => { showPassword = !showPassword; }}>
 							{#if showPassword}
 								<EyeOpen />
 							{:else}
@@ -96,7 +96,7 @@
 						<Label for="password">Password<span></span> </Label>
 						<div class="flex relative">
 							<Input name="password" placeholder="Password" type={passwordFieldState} />
-							<Toggle class="absolute top-0 right-10" on:click={() => { showPassword = !showPassword; }}>
+							<Toggle class="absolute top-0 right-0" on:click={() => { showPassword = !showPassword; }}>
 								{#if showPassword}
 									<EyeOpen />
 								{:else}
